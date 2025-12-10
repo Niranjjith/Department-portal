@@ -173,6 +173,19 @@
             backdrop-filter: blur(10px);
         }
 
+        .content-section p,
+        .content-section li,
+        .content-section h5,
+        .card p,
+        .card h5 {
+            color: var(--text);
+        }
+
+        .text-muted {
+            color: var(--text) !important;
+            opacity: 0.85;
+        }
+
         .section-title {
             font-weight: 700;
             color: var(--text);
@@ -280,6 +293,16 @@
             .header p { font-size: 1.05rem; }
             .nav-tabs .nav-link { padding: 0.55rem 1rem; font-size: 0.95rem; }
             .content-section { padding: 1.5rem; }
+        }
+
+        @media (max-width: 575px) {
+            .header { padding: 3rem 1rem 2rem; border-radius: 0 0 40% 40% / 16%; }
+            .header h1 { font-size: 2rem; }
+            .header p { font-size: 0.95rem; }
+            .nav-tabs { flex-wrap: wrap; gap: 0.35rem; }
+            .nav-tabs .nav-link { width: 100%; text-align: center; }
+            .content-section { padding: 1.15rem; }
+            .btn { width: 100%; margin-bottom: 0.35rem; }
         }
     </style>
 
