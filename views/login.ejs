@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Login | College Portal</title>
+   <link rel="stylesheet" href="/css/login.css" />
+</head>
+<body>
+  <div class="login-container">
+    <h2>Login</h2>
+
+    <% if (typeof errorMessage !== 'undefined') { %>
+      <div class="error-message"><%= errorMessage %></div>
+    <% } %>
+
+    <form action="/login" method="POST">
+      <input 
+        name="email" 
+        type="email" 
+        placeholder="Email" 
+        value="<%= typeof email !== 'undefined' ? email : '' %>" 
+        required 
+      />
+
+      <div class="password-container">
+        <input 
+          name="password" 
+          id="password" 
+          type="password" 
+          placeholder="Password" 
+          required 
+        />
+        <span class="toggle-password" onclick="togglePassword()">Show</span>
+      </div>
+
+      <button type="submit">Login</button>
+    </form>
+
+    <div class="links">
+      <p>Not registered? <a href="/signup">Sign up</a></p>
+      <p><a href="/">Back to Home</a></p>
+    </div>
+  </div>
+
+  <script>
+    function togglePassword() {
+      const pwd = document.getElementById('password');
+      const toggle = document.querySelector('.toggle-password');
+      if (pwd.type === 'password') {
+        pwd.type = 'text';
+        toggle.textContent = 'Hide';
+      } else {
+        pwd.type = 'password';
+        toggle.textContent = 'Show';
+      }
+    }
+  </script>
+</body>
+</html>

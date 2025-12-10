@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Sign Up</title>
+  <link rel="stylesheet" href="/css/signup.css" />
+  
+</head>
+<body>
+  <div class="signup-container">
+    <h2>Create Account</h2>
+    <form id="signupForm" action="/signup" method="POST" autocomplete="off" novalidate>
+      <input type="text" name="name" placeholder="Full Name" required />
+      <input type="email" id="email" name="email" placeholder="Email Address" required />
+      <div id="emailError" class="error-message">Email already exists.</div>
+
+      <div class="password-wrapper">
+        <input type="password" id="password" name="password" placeholder="Password" minlength="6" required />
+        <button type="button" id="togglePassword" class="toggle-password">Show</button>
+      </div>
+
+      <select name="semester" required>
+        <option value="" disabled selected>Select Semester</option>
+        <option value="1">Semester 1</option>
+        <option value="2">Semester 2</option>
+        <option value="3">Semester 3</option>
+        <option value="4">Semester 4</option>
+        <option value="5">Semester 5</option>
+        <option value="6">Semester 6</option>
+      </select>
+
+      <input type="submit" id="submitBtn" value="Sign Up" />
+    </form>
+
+    <a href="/login" class="back-link">Already have an account? Login</a><br />
+    <a href="/" class="home-button">Back to Home</a>
+  </div>
+
+  <script>
+    const togglePassword = document.getElementById('togglePassword');
+    const passwordInput = document.getElementById('password');
+    const emailInput = document.getElementById('email');
+    const emailError = document.getElementById('emailError');
+    const submitBtn = document.getElementById('submitBtn');
+    const form = document.getElementById('signupForm');
+
+    togglePassword.addEventListener('click', () => {
+      const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+      passwordInput.setAttribute('type', type);
+      togglePassword.textContent = type === 'password' ? 'Show' : 'Hide';
+    });
+
+    function checkEmailExists(email) {
+      const existingEmails = ['test@example.com', 'user@domain.com', 'admin@site.com'];
+      return existingEmails.includes(email.toLowerCase());
+    }
+
+    emailInput.addEventListener('blur', () => {
+      const email = emailInput.value.trim();
+      if (email && checkEmailExists(email)) {
+        emailError.style.display = 'block';
+        emailInput.classList.add('error');
+        submitBtn.disabled = true;
+      } else {
+        emailError.style.display = 'none';
+        emailInput.classList.remove('error');
+        submitBtn.disabled = false;
+      }
+    });
+
+    form.addEventListener('submit', (e) => {
+      if (emailInput.classList.contains('error')) {
+        e.preventDefault();
+        emailInput.focus();
+        return;
+      }
+      const name = form.elements['name'].value.trim();
+      const email = form.elements['email'].value.trim();
+      const password = form.elements['password'].value.trim();
+      const semester = form.elements['semester'].value;
+
+      if (!name || !email || !password || !semester) {
+        e.preventDefault();
+        alert('Please fill out all fields before signing up.');
+      }
+    });
+  </script>
+</body>
+</html>

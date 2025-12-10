@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>📚 Student Notes</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
+  <style>
+    * {
+      box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background: linear-gradient(135deg, #e7f1cf, #ecfdef);
+      min-height: 100vh;
+      padding: 1.5rem;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+    }
+
+    .container {
+      background: rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-radius: 20px;
+      padding: 2rem;
+      width: 100%;
+      max-width: 960px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+    }
+
+    .top-bar {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      justify-content: space-between;
+      margin-bottom: 1.5rem;
+    }
+
+    @media (min-width: 600px) {
+      .top-bar {
+        flex-direction: row;
+        align-items: center;
+      }
+    }
+
+    .back-button {
+      background-color: #222;
+      color: white;
+      padding: 10px 20px;
+      border-radius: 10px;
+      text-decoration: none;
+      font-weight: 600;
+      transition: background-color 0.3s ease;
+    }
+
+    .back-button:hover {
+      background-color: #444;
+    }
+
+    form {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    select, button {
+      padding: 10px 14px;
+      border-radius: 8px;
+      border: none;
+      font-size: 1rem;
+      outline: none;
+    }
+
+    select {
+      background: #fff;
+      color: #333;
+    }
+
+    button {
+      background-color: #222;
+      color: white;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    button:hover {
+      background-color: #444;
+    }
+
+    h1 {
+      text-align: center;
+      font-size: 2rem;
+      color: #222;
+      margin-bottom: 1.5rem;
+    }
+
+    ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    li {
+      background: rgba(255, 255, 255, 0.9);
+      border-radius: 12px;
+      padding: 1rem 1.5rem;
+      margin-bottom: 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+    }
+
+    .note-info {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .note-info span {
+      font-weight: 600;
+      color: #333;
+    }
+
+    @media (min-width: 600px) {
+      .note-info {
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+      }
+    }
+
+    a.view-link {
+      align-self: flex-start;
+      background-color: #007bff;
+      color: white;
+      text-decoration: none;
+      padding: 10px 16px;
+      border-radius: 8px;
+      font-weight: 500;
+      transition: background-color 0.3s;
+    }
+
+    a.view-link:hover {
+      background-color: #0056b3;
+    }
+
+    p {
+      text-align: center;
+      font-size: 1.1rem;
+      color: #333;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="top-bar">
+      <a href="/student" class="back-button">← Back to Dashboard</a>
+      <form method="GET" action="/student/notes">
+        <select name="semester">
+          <option value="">Semester</option>
+          <option value="1">1</option>
+          <option value="2">2</option>
+          <option value="3">3</option>
+          <option value="4">4</option>
+          <option value="5">5</option>
+          <option value="6">6</option>
+        </select>
+
+        <select name="category">
+          <option value="">All Types</option>
+          <option value="Note">Note</option>
+          <option value="QP">Question Paper</option>
+        </select>
+
+        <button type="submit">Filter</button>
+      </form>
+    </div>
+
+    <h1>Your Notes 📚</h1>
+
+    <% if (notes.length > 0) { %>
+      <ul>
+        <% notes.forEach(note => { %>
+          <li>
+            <div class="note-info">
+              <span>📌 Title: <%= note.title %></span>
+              <span>📖 Subject: <%= note.subject %></span>
+              <span>📂 Category: <%= note.category === 'QP' ? 'Question Paper' : 'Note' %></span>
+            </div>
+            <a class="view-link" href="/uploads/notes/<%= note.filename %>" target="_blank">📥 View Note</a>
+          </li>
+        <% }) %>
+      </ul>
+    <% } else { %>
+      <p>No notes uploaded yet.</p>
+    <% } %>
+  </div>
+</body>
+</html>
