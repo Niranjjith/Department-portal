@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Login | College Portal</title>
-   <link rel="stylesheet" href="/css/login.css" />
+  <link rel="stylesheet" href="/css/login.css" />
 </head>
 <body>
   <div class="login-container">
@@ -13,11 +14,11 @@
       <div class="error-message"><%= errorMessage %></div>
     <% } %>
 
-    <form action="/login" method="POST">
+    <form action="/login" method="POST" autocomplete="off">
       <input 
         name="email" 
         type="email" 
-        placeholder="Email" 
+        placeholder="Email Address" 
         value="<%= typeof email !== 'undefined' ? email : '' %>" 
         required 
       />
@@ -30,7 +31,7 @@
           placeholder="Password" 
           required 
         />
-        <span class="toggle-password" onclick="togglePassword()">Show</span>
+        <button type="button" id="togglePassword" class="toggle-password">Show</button>
       </div>
 
       <button type="submit">Login</button>
@@ -38,22 +39,19 @@
 
     <div class="links">
       <p>Not registered? <a href="/signup">Sign up</a></p>
-      <p><a href="/">Back to Home</a></p>
     </div>
+    <a href="/" class="home-button">Back to Home</a>
   </div>
 
   <script>
-    function togglePassword() {
-      const pwd = document.getElementById('password');
-      const toggle = document.querySelector('.toggle-password');
-      if (pwd.type === 'password') {
-        pwd.type = 'text';
-        toggle.textContent = 'Hide';
-      } else {
-        pwd.type = 'password';
-        toggle.textContent = 'Show';
-      }
-    }
+    const togglePassword = document.getElementById('togglePassword');
+    const passwordInput = document.getElementById('password');
+
+    togglePassword.addEventListener('click', () => {
+      const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+      passwordInput.setAttribute('type', type);
+      togglePassword.textContent = type === 'password' ? 'Show' : 'Hide';
+    });
   </script>
 </body>
 </html>
