@@ -30,8 +30,9 @@
           type="password" 
           placeholder="Password" 
           required 
+          autocomplete="current-password"
         />
-        <button type="button" id="togglePassword" class="toggle-password">Show</button>
+        <button type="button" id="togglePassword" class="toggle-password" aria-label="Toggle password visibility">Show</button>
       </div>
 
       <button type="submit">Login</button>
@@ -47,10 +48,19 @@
     const togglePassword = document.getElementById('togglePassword');
     const passwordInput = document.getElementById('password');
 
-    togglePassword.addEventListener('click', () => {
+    // Handle both click and touch events for better mobile support
+    const togglePasswordVisibility = () => {
       const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
       passwordInput.setAttribute('type', type);
       togglePassword.textContent = type === 'password' ? 'Show' : 'Hide';
+      // Focus back on input for better UX
+      passwordInput.focus();
+    };
+
+    togglePassword.addEventListener('click', togglePasswordVisibility);
+    togglePassword.addEventListener('touchend', (e) => {
+      e.preventDefault();
+      togglePasswordVisibility();
     });
   </script>
 </body>
