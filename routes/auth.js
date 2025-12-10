@@ -26,7 +26,9 @@ router.post('/signup', async (req, res) => {
   try {
     const { name, email, password, semester } = req.body;
 
-    if (email === ADMIN_EMAIL) {
+    // Check if email is used by admin
+    const adminUser = await User.findOne({ role: 'admin' });
+    if (adminUser && (adminUser.email === email || email === ADMIN_EMAIL)) {
       return res.send('Admin email is reserved.');
     }
 
@@ -61,23 +63,45 @@ router.get('/login', (req, res) => {
 router.post('/login', async (req, res) => {
   const { email, password } = req.body;
 
-  // Admin login
-  if (email === ADMIN_EMAIL && password === ADMIN_PASSWORD) {
-    req.session.user = { name: 'Admin', email: ADMIN_EMAIL, role: 'admin' };
-    return res.redirect('/admin');
+  // Check for admin in database first
+  const adminUser = await User.findOne({ email, role: 'admin' });
+  if (adminUser) {
+    if (await bcrypt.compare(password, adminUser.password)) {
+      req.session.user = adminUser;
+      return res.redirect('/admin');
+    }
   }
 
+  // Fallback to hardcoded admin for backward compatibility
+  if (email === ADMIN_EMAIL && password === ADMIN_PASSWORD) {
+    // Create admin user in database if doesn't exist
+    const existingAdmin = await User.findOne({ role: 'admin' });
+    if (!existingAdmin) {
+      const hash = await bcrypt.hash(ADMIN_PASSWORD, 10);
+      const newAdmin = await User.create({
+        name: 'Admin',
+        email: ADMIN_EMAIL,
+        password: hash,
+        role: 'admin'
+      });
+      req.session.user = newAdmin;
+    } else {
+      req.session.user = { name: 'Admin', email: ADMIN_EMAIL, role: 'admin' };
+    }
+    return res.redirect('/admin');
+  }
 
   const user = await User.findOne({ email });
 
   if (user && await bcrypt.compare(password, user.password)) {
     req.session.user = user;
 
-
     if (user.role === 'student') {
       return res.redirect('/student');
     } else if (user.role === 'teacher') {
       return res.redirect('/teacher');
+    } else if (user.role === 'admin') {
+      return res.redirect('/admin');
     } else {
       return res.send('Unknown role. Cannot redirect.');
     }
@@ -178,6 +202,13 @@ router.get('/admin', isAdmin, async (req, res) => {
       return acc;
     }, {});
 
+    // Get admin user info
+    const adminUser = await User.findOne({ role: 'admin' }).lean();
+    const adminInfo = adminUser || { 
+      email: req.session.user?.email || ADMIN_EMAIL, 
+      name: req.session.user?.name || 'Admin' 
+    };
+
     res.render('admin-dashboard', {
       students,
       teachers,
@@ -185,6 +216,8 @@ router.get('/admin', isAdmin, async (req, res) => {
       totalTeachers,
       semesterCounts,
       selectedSemester,
+      adminInfo,
+      showSettings: false
     });
   } catch (err) {
     console.error(err);
@@ -319,6 +352,135 @@ router.post('/admin/edit-teacher/:id', isAdmin, async (req, res) => {
 router.post('/admin/delete-teacher/:id', isAdmin, async (req, res) => {
   await User.findByIdAndDelete(req.params.id);
   res.redirect('/admin');
+});
+
+//--------------------------- Admin Settings - Change Credentials ---------------------
+
+router.get('/admin/settings', isAdmin, async (req, res) => {
+  try {
+    const adminUser = await User.findOne({ role: 'admin' }).lean();
+    res.render('admin-dashboard', {
+      students: [],
+      teachers: [],
+      totalStudents: 0,
+      totalTeachers: 0,
+      selectedSemester: '',
+      showSettings: true,
+      adminUser: adminUser || { email: ADMIN_EMAIL, name: 'Admin' }
+    });
+  } catch (err) {
+    console.error(err);
+    res.redirect('/admin');
+  }
+});
+
+router.post('/admin/change-email', isAdmin, async (req, res) => {
+  try {
+    const { newEmail, currentPassword } = req.body;
+    
+    if (!newEmail || !currentPassword) {
+      return res.json({ success: false, message: 'All fields are required' });
+    }
+
+    // Find admin user
+    let adminUser = await User.findOne({ role: 'admin' });
+    
+    // Verify current password
+    let passwordValid = false;
+    if (adminUser) {
+      passwordValid = await bcrypt.compare(currentPassword, adminUser.password);
+    } else {
+      // Fallback to hardcoded password
+      passwordValid = (currentPassword === ADMIN_PASSWORD);
+    }
+
+    if (!passwordValid) {
+      return res.json({ success: false, message: 'Current password is incorrect' });
+    }
+
+    // Check if new email is already taken
+    const emailExists = await User.findOne({ email: newEmail });
+    if (emailExists && emailExists.role !== 'admin') {
+      return res.json({ success: false, message: 'Email already in use' });
+    }
+
+    // Update admin email
+    if (adminUser) {
+      adminUser.email = newEmail;
+      await adminUser.save();
+    } else {
+      // Create admin user if doesn't exist
+      const hash = await bcrypt.hash(currentPassword, 10);
+      adminUser = await User.create({
+        name: 'Admin',
+        email: newEmail,
+        password: hash,
+        role: 'admin'
+      });
+    }
+
+    // Update session
+    req.session.user = adminUser;
+    
+    res.json({ success: true, message: 'Email updated successfully' });
+  } catch (err) {
+    console.error(err);
+    res.json({ success: false, message: 'Error updating email' });
+  }
+});
+
+router.post('/admin/change-password', isAdmin, async (req, res) => {
+  try {
+    const { currentPassword, newPassword, confirmPassword } = req.body;
+    
+    if (!currentPassword || !newPassword || !confirmPassword) {
+      return res.json({ success: false, message: 'All fields are required' });
+    }
+
+    if (newPassword !== confirmPassword) {
+      return res.json({ success: false, message: 'New passwords do not match' });
+    }
+
+    if (newPassword.length < 6) {
+      return res.json({ success: false, message: 'Password must be at least 6 characters' });
+    }
+
+    // Find admin user
+    let adminUser = await User.findOne({ role: 'admin' });
+    
+    // Verify current password
+    let passwordValid = false;
+    if (adminUser) {
+      passwordValid = await bcrypt.compare(currentPassword, adminUser.password);
+    } else {
+      // Fallback to hardcoded password
+      passwordValid = (currentPassword === ADMIN_PASSWORD);
+    }
+
+    if (!passwordValid) {
+      return res.json({ success: false, message: 'Current password is incorrect' });
+    }
+
+    // Update password
+    const hash = await bcrypt.hash(newPassword, 10);
+    if (adminUser) {
+      adminUser.password = hash;
+      await adminUser.save();
+    } else {
+      // Create admin user if doesn't exist
+      adminUser = await User.create({
+        name: 'Admin',
+        email: ADMIN_EMAIL,
+        password: hash,
+        role: 'admin'
+      });
+    }
+
+    res.json({ success: true, message: 'Password updated successfully' });
+  } catch (err) {
+    console.error(err);
+    res.json({ success: false, message: 'Error updating password' });
+  }
 });
 
 //---------------Connection of the resume builder------------------------
