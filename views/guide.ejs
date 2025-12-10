@@ -209,7 +209,7 @@
             margin-bottom: 1rem;
             padding-left: 30px;
             font-size: 1.05rem;
-            color: var(--muted);
+            color: var(--text);
             line-height: 1.6;
         }
 
@@ -331,6 +331,12 @@
                 <button class="nav-link" id="freelancing-tab" data-bs-toggle="tab" type="button" role="tab"
                     aria-controls="freelancing" aria-selected="false" onclick="showMainSection('freelancing')">
                     Freelancing
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="career-tab" data-bs-toggle="tab" type="button" role="tab"
+                    aria-controls="career" aria-selected="false" onclick="showMainSection('career')">
+                    IT Career Toolkit
                 </button>
             </li>
         </ul>
@@ -742,6 +748,69 @@
             <div class="text-center mt-4">
                 <a href="https://www.fiverr.com/resources/guides/freelancer-success" target="_blank" rel="noopener"
                     class="btn btn-lg btn-primary px-5">Kickstart Your Freelance Career Today</a>
+            </div>
+        </section>
+
+        <!-- IT Career Toolkit Section -->
+        <section id="career" class="content-section d-none animate__animated animate__fadeIn">
+            <h2 class="section-title">IT Career Toolkit</h2>
+            <p class="text-center mb-4">Job-ready resources to land and grow in IT roles—resume polish, ATS checks, interview prep, and market research.</p>
+
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <div class="card p-4 h-100">
+                        <h5>ATS-Friendly Resume & Portfolio</h5>
+                        <p>Create a clean, keyword-rich resume and a one-page portfolio that recruiters can scan fast.</p>
+                        <a href="https://standardresume.co/" target="_blank" rel="noopener" class="btn btn-primary mb-2">Build Resume</a>
+                        <a href="https://www.canva.com/resumes/templates/ats-resume/" target="_blank" rel="noopener" class="btn btn-outline-primary">ATS Templates</a>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card p-4 h-100">
+                        <h5>Interview Drills (DSA & System Design)</h5>
+                        <p>Short daily reps: 1 DSA problem + 1 system design prompt to keep you sharp.</p>
+                        <a href="https://neetcode.io/practice" target="_blank" rel="noopener" class="btn btn-success mb-2">Daily DSA</a>
+                        <a href="https://interviewing.io/system-design-interview-questions" target="_blank" rel="noopener" class="btn btn-outline-primary">System Design Qs</a>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card p-4 h-100">
+                        <h5>Role Guides & Salary Research</h5>
+                        <p>Know the expectations, skills, and market bands before you apply.</p>
+                        <a href="https://www.levels.fyi/" target="_blank" rel="noopener" class="btn btn-warning mb-2">Levels.fyi</a>
+                        <a href="https://www.linkedin.com/salary/" target="_blank" rel="noopener" class="btn btn-outline-primary">LinkedIn Salary</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row g-4 mt-2">
+                <div class="col-md-6">
+                    <div class="card p-4 h-100">
+                        <h5>Job Search Workflow</h5>
+                        <ul class="guide-list">
+                            <li>Target 2–3 roles (e.g., Backend Node.js, Frontend React, Support Engineer).</li>
+                            <li>Refresh resume keywords to match each JD; keep a master version.</li>
+                            <li>Line up 5–10 tailored applications per week; track in a sheet/Notion.</li>
+                            <li>Warm referrals: message alumni or past teammates with a concise pitch.</li>
+                            <li>Weekly retro: what worked, where you stalled, and 1 improvement for next week.</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card p-4 h-100">
+                        <h5>Interview Day Checklist</h5>
+                        <ul class="guide-list">
+                            <li>Print/wear: role requirements, your 3 strongest stories (STAR), 2 project walkthroughs.</li>
+                            <li>Environment check: camera, mic, backup hotspot, calendar link ready.</li>
+                            <li>Ask back: team’s top 90-day goals, on-call expectations, growth path.</li>
+                            <li>Follow-up: thank-you email with one concrete problem you’re excited to tackle.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="text-center mt-4">
+                <a href="https://interviewing.io/mock-interview" target="_blank" rel="noopener" class="btn btn-lg btn-primary px-5">Book a Mock Interview</a>
             </div>
         </section>
 
